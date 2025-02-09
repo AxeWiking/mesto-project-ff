@@ -1,7 +1,3 @@
-import { openModal } from './modal.js'
-
-const popupPreviewDialog = document.querySelector('.popup_type_image');
-
 const defaultCardTitle = "Бермудский треугольник";
 const defaultCardLink = "#";
 
@@ -32,17 +28,19 @@ export const initialCards = [
     }
 ];
 
-export function createCard(card, functionDelete = deleteCard, functionLike = likeCard, functionPreview = previewCard) {
+export function createCard(card, functionPreview, functionDelete = deleteCard, functionLike = likeCard) {
   const titleValue = card.name || defaultCardTitle;
   const linkValue = card.link || defaultCardLink;
 
   const cardTemplate = document.querySelector('#card-template').content;
   const cardItem = cardTemplate.querySelector('.card').cloneNode(true);
+  const cardImage = cardItem.querySelector('.card__image');
   cardItem.querySelector('.card__title').textContent = titleValue;
-  cardItem.querySelector('.card__image').src = linkValue;
   cardItem.querySelector('.card__delete-button').addEventListener('click', functionDelete);
   cardItem.querySelector('.card__like-button').addEventListener('click', functionLike);
-  cardItem.querySelector('.card__image').addEventListener('click', functionPreview);
+  cardImage.src = linkValue;
+  cardImage.alt = titleValue;
+  cardImage.addEventListener('click', functionPreview);
   return cardItem;
 }
 
@@ -53,13 +51,4 @@ export function deleteCard(event) {
 
 export function likeCard(event) {
   event.target.classList.toggle('card__like-button_is-active');
-}
-
-export function previewCard(event) {
-  const cardItem = event.target.closest('.card');
-  const imageSrc = cardItem.querySelector('.card__image').src;
-  const description = cardItem.querySelector('.card__title').textContent;
-  popupPreviewDialog.querySelector('.popup__image').src = imageSrc;
-  popupPreviewDialog.querySelector('.popup__caption').textContent = description;
-  openModal(popupPreviewDialog);
 }

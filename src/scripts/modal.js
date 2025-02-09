@@ -1,24 +1,27 @@
-function escapePressHandler(evt) {
+function closeModalHandlerByEscape(evt) {
   if(evt.key === 'Escape') {
-    document.querySelectorAll('.popup').forEach(closeModal);
+    const popups = document.querySelectorAll('.popup');
+    const openedPopup = popups.find(item => item.classList.contains('popup_is-opened'));
+    if(openedPopup) {
+      closeModal(openedPopup);
+    }
   }
 }
 
 export function openModal(popup) {
   popup.classList.add('popup_is-opened');
-  popup.classList.add('popup_is-animated');
-  document.addEventListener('keydown', escapePressHandler);
+  document.addEventListener('keydown', closeModalHandlerByEscape);
 }
 
 export function closeModal(popup) {
   popup.classList.remove('popup_is-opened');
-  document.removeEventListener('keydown', escapePressHandler);
+  document.removeEventListener('keydown', closeModalHandlerByEscape);
 }
 
-document.addEventListener('click', function (evt) {
+export function closeModalHandlerByClick(evt) {
   if (evt.target.classList.contains('popup__close')) {
     closeModal(evt.target.closest('.popup'));
   } else if (evt.target.classList.contains('popup')) {
     closeModal(evt.target);
   }
-});
+}
