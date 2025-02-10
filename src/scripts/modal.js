@@ -1,7 +1,6 @@
 function closeModalHandlerByEscape(evt) {
   if(evt.key === 'Escape') {
-    const popups = Array.from(document.querySelectorAll('.popup'));
-    const openedPopup = popups.find(item => item.classList.contains('popup_is-opened'));
+    const openedPopup = document.querySelector('.popup_is-opened');
     if(openedPopup) {
       closeModal(openedPopup);
     }
