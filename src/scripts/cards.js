@@ -1,54 +1,54 @@
 const defaultCardTitle = "Бермудский треугольник";
 const defaultCardLink = "#";
 
-export const initialCards = [
-    {
-      name: "Архыз",
-      link: "https://pictures.s3.yandex.net/frontend-developer/cards-compressed/arkhyz.jpg",
-    },
-    {
-      name: "Челябинская область",
-      link: "https://pictures.s3.yandex.net/frontend-developer/cards-compressed/chelyabinsk-oblast.jpg",
-    },
-    {
-      name: "Иваново",
-      link: "https://pictures.s3.yandex.net/frontend-developer/cards-compressed/ivanovo.jpg",
-    },
-    {
-      name: "Камчатка",
-      link: "https://pictures.s3.yandex.net/frontend-developer/cards-compressed/kamchatka.jpg",
-    },
-    {
-      name: "Холмогорский район",
-      link: "https://pictures.s3.yandex.net/frontend-developer/cards-compressed/kholmogorsky-rayon.jpg",
-    },
-    {
-      name: "Байкал",
-      link: "https://pictures.s3.yandex.net/frontend-developer/cards-compressed/baikal.jpg",
-    }
-];
-
-export function createCard(card, functionPreview, functionDelete = deleteCard, functionLike = likeCard) {
+export function createCard(card, functionPreview, functionDelete, functionLike) {
+  
   const titleValue = card.name || defaultCardTitle;
   const linkValue = card.link || defaultCardLink;
 
   const cardTemplate = document.querySelector('#card-template').content;
   const cardItem = cardTemplate.querySelector('.card').cloneNode(true);
+  const cardId = cardItem.querySelector('.card__id');
   const cardImage = cardItem.querySelector('.card__image');
-  cardItem.querySelector('.card__title').textContent = titleValue;
-  cardItem.querySelector('.card__delete-button').addEventListener('click', functionDelete);
-  cardItem.querySelector('.card__like-button').addEventListener('click', functionLike);
+  const cardTitle = cardItem.querySelector('.card__title');
+  const cardDeleteButton = cardItem.querySelector('.card__delete-button');
+  const cardLikeButton = cardItem.querySelector('.card__like-button');  
+
+  cardId.textContent = card._id;
+  cardTitle.textContent = titleValue;
+  if(functionDelete) {
+    cardDeleteButton.addEventListener('click', functionDelete);
+  } else {
+    cardDeleteButton.classList.add('card__delete-button_disabled');
+  }
+  cardLikeButton.addEventListener('click', functionLike);
+
   cardImage.src = linkValue;
   cardImage.alt = titleValue;
   cardImage.addEventListener('click', functionPreview);
   return cardItem;
 }
 
-export function deleteCard(event) {
-  const cardItem = event.target.closest('.card');
-  cardItem.remove();
+export function getCardId(card) {
+  return card.querySelector('.card__id').textContent;
 }
 
-export function likeCard(event) {
-  event.target.classList.toggle('card__like-button_is-active');
+export function isRemovableCard(card) {
+  return card.querySelector('.card__delete-button_disabled') === null;
 }
+
+export function isLikedCard(card) {
+  return card.querySelector('.card__like-button_is-active') !== null;
+}
+
+export function updateLikeStatus(card, data, profileId) {
+  const cardLikeButton = card.querySelector('.card__like-button');
+  const cardLikesNumber = card.querySelector('.card__like-number');
+  if(data.likes.find(item => item._id === profileId)) {
+    cardLikeButton.classList.add('card__like-button_is-active');
+  } else {
+    cardLikeButton.classList.remove('card__like-button_is-active');
+  }
+  cardLikesNumber.textContent = data.likes.length;
+}
+

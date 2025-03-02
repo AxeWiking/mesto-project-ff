@@ -15,6 +15,8 @@ export function openModal(popup) {
 export function closeModal(popup) {
   popup.classList.remove('popup_is-opened');
   document.removeEventListener('keydown', closeModalHandlerByEscape);
+  const closeEvent = new Event('closePopup', {bubbles: true});
+  popup.dispatchEvent(closeEvent);
 }
 
 export function closeModalHandlerByClick(evt) {
