@@ -12,6 +12,7 @@
 
 .profile__image:hover::before {
   content: "";
+  cursor: pointer;
   inset: 0;
   position: absolute;
   background: transparent url('../../../images/edit-icon.svg') center no-repeat;

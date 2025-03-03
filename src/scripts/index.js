@@ -125,10 +125,7 @@ function sumbitDeleteCard(evt) {
     deleteCardForm.elements['card-id'].value, 
     function (cardId) {
       const cards = document.querySelectorAll('.card');
-      const remCard = Array.from(cards).find((card) => {
-        const id = card.querySelector('.card__id');
-        return id.textContent === cardId;
-      });
+      const remCard = Array.from(cards).find(card => getCardId(card) === cardId);
       if(remCard) {
         remCard.remove();
       }
@@ -167,9 +164,9 @@ function sumbitNewCardOptions(evt) {
 
 
 function previewCard(event) {
-  const cardItem = event.target.closest('.card');
-  const cardImage = cardItem.querySelector('.card__image');
-  const cardDescription = cardItem.querySelector('.card__title');
+  const card = event.target.closest('.card');
+  const cardImage = card.querySelector('.card__image');
+  const cardDescription = card.querySelector('.card__title');
   previewDialogImage.src = cardImage.src;
   previewDialogImage.alt = cardImage.alt;
   previewDialogCaption.textContent = cardDescription.textContent;
