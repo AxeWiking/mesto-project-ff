@@ -14,32 +14,26 @@ function responceToJson(responce) {
   return Promise.reject(`Ошибка: ${responce.status}`);
 }
 
-function logApiError(error) {
+export function logApiError(error) {
   console.log(error);
 }
 
-function asyncLoadProfile(thenAction) {
+export function loadProfile() {
   return fetch(apiProfile, { 
       headers: headersConfig
     }
-  ).then(responceToJson).then(thenAction).catch(logApiError);
+  ).then(responceToJson);
 }
  
-
-function asyncLoadCards(thenAction) {
+export function loadCards() {
   return fetch(apiCards, {
      headers: headersConfig 
     }
-  ).then(responceToJson).then(thenAction).catch(logApiError);
+  ).then(responceToJson);
 }
 
-export function initialRequest(applayProfile, applyCards) {
-  Promise.all([asyncLoadProfile(applayProfile), asyncLoadCards(data => data)])
-  .then(results => applyCards(results[1])).catch(logApiError);
-}
-
-export function storeProfileRequest(title, description, thenAction, finalAction) {
-  fetch(apiProfile, {
+export function storeProfile(title, description) {
+  return fetch(apiProfile, {
       method: 'PATCH',
       headers: headersConfig,
       body: JSON.stringify({
@@ -47,36 +41,30 @@ export function storeProfileRequest(title, description, thenAction, finalAction)
         about: description
       })
     }
-  )
-  .then(responceToJson).then((data) => thenAction(data.name, data.about))
-  .catch(logApiError).finally(finalAction);
+  ).then(responceToJson);
 }
 
-export function storeAvatarRequest(avatarLink, thenAction, finalAction) {
-  fetch(apiProfile + '/avatar', {
+export function storeAvatar(avatarLink) {
+  return fetch(apiProfile + '/avatar', {
       method: 'PATCH',
       headers: headersConfig,
       body: JSON.stringify({
         avatar: avatarLink
       })
     }
-  )
-  .then(responceToJson).then((data) => thenAction(data.avatar))
-  .catch(logApiError).finally(finalAction);
+  ).then(responceToJson);
 }
 
-export function deleteCardRequest(cardId, thenAction, finalAction) {
-  fetch(apiCards + '/' + cardId, {
+export function deleteCard(cardId) {
+  return fetch(apiCards + '/' + cardId, {
       method: 'DELETE',
       headers: headersConfig
     }
-  )
-  .then(responceToJson).then(() => thenAction(cardId))
-  .catch(logApiError).finally(finalAction);
+  ).then(responceToJson);
 }
 
-export function storeCardRequest(placeName, placeLink, thenAction, finalAction) {
-  fetch(apiCards, {
+export function storeCard(placeName, placeLink) {
+  return fetch(apiCards, {
       method: 'POST',
       headers: headersConfig,
       body: JSON.stringify({
@@ -84,16 +72,13 @@ export function storeCardRequest(placeName, placeLink, thenAction, finalAction) 
         link: placeLink
       })
     }
-  )
-  .then(responceToJson).then(thenAction)
-  .catch(logApiError).finally(finalAction);
+  ).then(responceToJson);
 }
 
-export function likeCardRequest(cardId, like, thenAction) {
-  fetch(apiCards + '/likes/' + cardId, {
+export function likeCard(cardId, like) {
+  return fetch(apiCards + '/likes/' + cardId, {
       method: like ? 'PUT' : 'DELETE',
       headers: headersConfig
     }
-  )
-  .then(responceToJson).then(thenAction).catch(logApiError);
+  ).then(responceToJson);
 }
