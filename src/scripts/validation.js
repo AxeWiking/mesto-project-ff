@@ -5,12 +5,10 @@ export function enableValidation(config) {
 
 export function clearValidation(formElement, config) {
   const inputList = Array.from(formElement.querySelectorAll(config.inputSelector));
-  inputList.forEach(inputElement => clearInputValidity(formElement, inputElement, config));
-
-  toggleButtonState(formElement, config);
   inputList.forEach((inputElement) => { 
     checkInputValidity(formElement, inputElement, config);
   });
+  toggleButtonState(formElement, config);
 }
 
 function startValidation(formElement, config) {
@@ -38,11 +36,6 @@ function hideInputError (formElement, inputElement, config) {
   errorElement.textContent = '';
 }
 
-function clearInputValidity (formElement, inputElement, config) {
-  inputElement.setCustomValidity("");
-  hideInputError(formElement, inputElement, config);
-};
-
 function checkInputValidity (formElement, inputElement, config) {
   if (inputElement.validity.patternMismatch) {
     inputElement.setCustomValidity(inputElement.dataset.errorMessage);
@@ -62,12 +55,6 @@ function hasInvalidInput (inputList) {
     return !inputElement.validity.valid;
   })
 }
-
-function clearButtonState (formElement, config) {
-  const buttonElement = formElement.querySelector(config.submitButtonSelector);
-  buttonElement.disabled = true;
-  buttonElement.classList.add(config.inactiveButtonClass);
-};
 
 function toggleButtonState (formElement, config) {
   const inputList = Array.from(formElement.querySelectorAll(config.inputSelector));

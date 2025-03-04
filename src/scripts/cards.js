@@ -10,7 +10,8 @@ export function createCard(cardInfo, functionPreview, functionDelete, functionLi
   const cardImage = card.querySelector('.card__image');
   const cardTitle = card.querySelector('.card__title');
   const cardDeleteButton = card.querySelector('.card__delete-button');
-  const cardLikeButton = card.querySelector('.card__like-button');  
+  const cardLikeButton = card.querySelector('.card__like-button');
+  const cardLikesNumber = card.querySelector('.card__like-number');
 
   cardTitle.textContent = titleValue;
   if(functionDelete) {
@@ -23,6 +24,7 @@ export function createCard(cardInfo, functionPreview, functionDelete, functionLi
   cardLikeButton.addEventListener('click', function (event) {
     functionLike(card, cardInfo._id);
   });
+  cardLikesNumber.textContent = 0;
 
   cardImage.src = linkValue;
   cardImage.alt = titleValue;

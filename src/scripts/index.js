@@ -15,8 +15,8 @@ const profileImageItem = content.querySelector('.profile__image');
 
 const editProfileDialog = document.querySelector('.popup_type_edit');
 const editAvatarDialog = document.querySelector('.popup_type_edit-avatar');
-const newCardDialog = document.querySelector('.popup_type_new-card');
-const deleteCardDialog = document.querySelector('.popup_type_delete-card');
+const cardCreationDialog = document.querySelector('.popup_type_new-card');
+const cardDeletionDialog = document.querySelector('.popup_type_delete-card');
 const previewDialog = document.querySelector('.popup_type_image');
 const previewDialogImage = previewDialog.querySelector('.popup__image');
 const previewDialogCaption = previewDialog.querySelector('.popup__caption');
@@ -45,27 +45,29 @@ function previewCardCallback(src, alt, description) {
 
 function likeCardCallback(card, cardId) {
   likeCard(cardId, !isLikedCard(card))
-  .then(cardInfo => updateLikeStatus(card, cardInfo, profileIdItem.textContent))
+  .then(cardInfo => updateLikeStatus(card, cardInfo, profileId))
   .catch(logApiError);
 }
 
 function applayProfile(profileInfo) {
-  profileIdItem.textContent = profileInfo._id;
+  globalThis.profileId = profileInfo._id;
   profileTitleItem.textContent = profileInfo.name;
   profileDescriptionItem.textContent = profileInfo.about;
   profileImageItem.style['background-image'] = `url(${profileInfo.avatar})`;
 }
 
+function appendCard(cardInfo) {
+  const card = createCard(cardInfo, previewCardCallback,
+    profileId === cardInfo.owner._id ? openCardDeletionDialog : null,
+    likeCardCallback);
+  updateLikeStatus(card, cardInfo, profileId);
+  placesList.append(card);
+}
+
 function initializeProfileAndCards() {
   Promise.all([loadProfile().then(applayProfile), loadCards()])
   .then(function (results) {
-    results[1].forEach((item) => {
-      const card = createCard(item, previewCardCallback,
-        profileIdItem.textContent === item.owner._id ? deleteCardCallback : null,
-        likeCardCallback);
-      updateLikeStatus(card, item, profileIdItem.textContent);
-      placesList.append(card);
-    });
+    results[1].forEach(item => appendCard(item));
   }).catch(logApiError);
 }
 
@@ -124,12 +126,12 @@ function sumbitPopupAvatar(event) {
 }
 
 let dangerGlobalCardReferenceForDeletingCardLater = null;
-function deleteCardCallback(card, cardId) {
+function openCardDeletionDialog(card, cardId) {
   dangerGlobalCardReferenceForDeletingCardLater = { 
     Card: card, 
     CardId: cardId
   };
-  openModal(deleteCardDialog);
+  openModal(cardDeletionDialog);
 }
 
 function sumbitDeleteCard(event) {
@@ -148,7 +150,7 @@ function sumbitDeleteCard(event) {
       dangerGlobalCardReferenceForDeletingCardLater.Card.remove();
       dangerGlobalCardReferenceForDeletingCardLater = null;
     }
-    closeModal(deleteCardDialog);
+    closeModal(cardDeletionDialog);
   })
   .catch(logApiError)
   .finally(function () {
@@ -160,7 +162,7 @@ function sumbitDeleteCard(event) {
 function openPopupNewCardOptions() {
   createCardForm.reset();
   clearValidation(createCardForm, validationConfig);
-  openModal(newCardDialog);
+  openModal(cardCreationDialog);
 }
 
 function sumbitNewCardOptions(evt) {
@@ -173,10 +175,9 @@ function sumbitNewCardOptions(evt) {
     createCardForm.elements.link.value)
   .then(function (cardInfo) {
     const card = createCard(cardInfo, 
-      previewCardCallback, deleteCardCallback, likeCardCallback);
-    updateLikeStatus(card, cardInfo, profileIdItem.textContent);
+      previewCardCallback, openCardDeletionDialog, likeCardCallback);
     placesList.prepend(card);
-    closeModal(newCardDialog);
+    closeModal(cardCreationDialog);
   })
   .catch(logApiError)
   .finally(function () {
